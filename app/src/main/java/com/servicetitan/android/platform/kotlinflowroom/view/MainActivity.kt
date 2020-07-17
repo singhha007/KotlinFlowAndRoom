@@ -21,9 +21,14 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var showAdapter: ShowAdapter
+    private lateinit var mainNotifier: MainNotifier
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mainNotifier = MainNotifier()
+        actionNotifier()
+        mainNotifier.listenToAction()
+        mainNotifier.notifyRefresh()
         setContentView(R.layout.activity_main)
         setupRecyclerView()
     }
@@ -44,6 +49,15 @@ class MainActivity : AppCompatActivity() {
                 }
                 .progress()
                 .collect { showAdapter.updateData(it) }
+        }
+    }
+
+    private fun actionNotifier() {
+        Scope2 {
+            mainNotifier.notifierFlow.collect {
+                Toast.makeText(this@MainActivity, it.name, Toast.LENGTH_SHORT).show()
+                if(it == MainActivityAction.REFRESH) mainNotifier.notifyProgress()
+            }
         }
     }
 
