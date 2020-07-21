@@ -35,6 +35,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+//        lifecycleScope.launch {
+//            runCatching {
+//                val shows = provideShowRepository().popularShowSuspend()
+//            }.onFailure { }
+//        }
+//
 //        Scope1 {
 //            val popularShow: Response<Show> = provideShowRepository().popularShowSuspend()
 //            val string = provideShowRepository().test()
@@ -48,7 +54,10 @@ class MainActivity : AppCompatActivity() {
                     shows.forEach { it.updateGenre(genre) }.let { shows }
                 }
                 .progress()
-                .collect { showAdapter.updateData(it) }
+                .catch {  }
+                .collect {
+                    showAdapter.updateData(it)
+                }
         }
     }
 
@@ -56,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         Scope2 {
             mainNotifier.notifierFlow.collect {
                 Toast.makeText(this@MainActivity, it.name, Toast.LENGTH_SHORT).show()
-                if(it == MainActivityAction.REFRESH) mainNotifier.notifyProgress()
+                if (it == MainActivityAction.REFRESH) mainNotifier.notifyProgress()
             }
         }
     }

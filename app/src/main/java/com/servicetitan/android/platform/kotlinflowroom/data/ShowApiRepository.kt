@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 
 class ShowApiRepository(private val showApi: ShowApi, private val showDatabase: ShowDatabase) {
 
-    suspend fun popularShowSuspend(refresh: Boolean = false): Response<Show> = showApi.popularShow()
+    suspend fun popularShowSuspend(): Response<Show> = showApi.popularShow()
 
     suspend fun test(): String {
         delay(5000)
