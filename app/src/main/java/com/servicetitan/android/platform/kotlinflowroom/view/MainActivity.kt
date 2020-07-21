@@ -15,6 +15,7 @@ import com.servicetitan.android.platform.kotlinflowroom.data.model.Show
 import com.servicetitan.android.platform.kotlinflowroom.provideShowRepository
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -54,12 +55,27 @@ class MainActivity : AppCompatActivity() {
                     shows.forEach { it.updateGenre(genre) }.let { shows }
                 }
                 .progress()
-                .catch {  }
+                .catch { }
                 .collect {
                     showAdapter.updateData(it)
                 }
         }
+
+//        provideShowRepository().popularShow()
+//            .combine(provideShowRepository().genre()) { shows, genre ->
+//                shows.forEach { it.updateGenre(genre) }.let { shows }
+//            }
+//            .progress()
+//            .catch { }
+//            .launchIn(lifecycleScope) {
+//                showAdapter.updateData(it)
+//            }
     }
+
+    private fun <T> Flow<T>.launchIn(scope: CoroutineScope, collect: (T) -> Unit): Job =
+        scope.launch {
+            collect { collect.invoke(it) }
+        }
 
     private fun actionNotifier() {
         Scope2 {
